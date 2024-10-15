@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #f0e68c; /* Light yellow for spooky effect */
+            font-family: 'Creepster', cursive; /* A spooky font */
+            background-image: url('https://cdn.pixabay.com/photo/2015/09/18/19/03/spider-web-957956_960_720.jpg'); /* Spider web background */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            text-align: center;
+            color: orange;
+            text-shadow: 2px 2px 5px black;
+        }
+        .container {
+            width: 70%;
+            margin: auto;
+            padding: 20px;
+            background: rgba(50, 50, 50, 0.8); /* Darker transparent background */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1; /* Ensure content is above background */
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            width: 90%;
+            border-radius: 5px;
+            border: 1px solid #f0e68c; /* Light yellow border */
+            background-color: rgba(202, 137, 15, 0.055); /* Semi-transparent input */
+            color: #0c0c0c; /* Match text color */
+        }
+        button {
+            background-color: orange;
+            color: rgb(8, 8, 8);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkorange;
+        }
+        .recommendations {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #141414;
+        }
+        th {
+            background-color: #555;
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <h1>Movie Recommendations</h1>
+    <div class="container">
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="movie">Enter a Movie Title:</label>
+                <input type="text" id="movie" name="movie" placeholder="Enter movie title...">
+            </div>
+            <div class="form-group">
+                <label for="language">Select Language:</label>
+                <select id="language" name="language">
+                    <option value="">Select Language</option>
+                    <option value="en" {% if request.form.get('language') == 'en' %} selected {% endif %}>English</option>
+                    <option value="hi" {% if request.form.get('language') == 'hi' %} selected {% endif %}>Hindi</option>
+                    <option value="ja" {% if request.form.get('language') == 'ja' %} selected {% endif %}>Japanese</option>
+                    <option value="ko" {% if request.form.get('language') == 'ko' %} selected {% endif %}>Korean</option>
+                    <option value="it" {% if request.form.get('language') == 'it' %} selected {% endif %}>Italian</option>
+                    <option value="es" {% if request.form.get('language') == 'es' %} selected {% endif %}>Spanish</option>
+                    <!-- Add more languages as needed -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="genre">Select Genre:</label>
+                <select id="genre" name="genre">
+                    <option value="">Select Genre</option>
+                    <option value="Action" {% if request.form.get('genre') == 'Action' %} selected {% endif %}>Action</option>
+                    <option value="Drama" {% if request.form.get('genre') == 'Drama' %} selected {% endif %}>Drama</option>
+                    <option value="Comedy" {% if request.form.get('genre') == 'Comedy' %} selected {% endif %}>Comedy</option>
+                    <option value="Fantasy" {% if request.form.get('genre') == 'Fanstasy' %} selected {% endif %}>Fantasy</option>
+                    <option value="History" {% if request.form.get('genre') == 'History' %} selected {% endif %}>History</option>
+                    <option value="Crime" {% if request.form.get('genre') == 'Crime' %} selected {% endif %}>Crime</option>
+                    <option value="War" {% if request.form.get('genre') == 'War' %} selected {% endif %}>War</option>
+                    <option value="Animation" {% if request.form.get('genre') == 'Animation' %} selected {% endif %}>Animation</option>
+                    <option value="Family" {% if request.form.get('genre') == 'Family' %} selected {% endif %}>Family</option>
+                    <option value="Romance" {% if request.form.get('genre') == 'Romance' %} selected {% endif %}>Romance</option>
+                    <option value="Thriller" {% if request.form.get('genre') == 'Thriller' %} selected {% endif %}>Thriller</option>
+                    <option value="Adventure" {% if request.form.get('genre') == 'Adventure' %} selected {% endif %}>Adventure</option>
+                    <option value="Western" {% if request.form.get('genre') == 'Western' %} selected {% endif %}>Western</option>
+                    <option value="Horror" {% if request.form.get('genre') == 'Horror' %} selected {% endif %}>Horror</option>
+                    <option value="Mystery" {% if request.form.get('genre') == 'Mystery' %} selected {% endif %}>Mystery</option>
+                    <option value="Music" {% if request.form.get('genre') == 'Music' %} selected {% endif %}>Music</option>
+                </select>
+            </div>
+            <button type="submit">Get Recommendations</button>
+            <button type="button" onclick="location.href='/'">Reset</button>
+        </form>
+
+        <div class="recommendations">
+            {% if recommendations is not none %}
+                <h2>Recommended Movies:</h2>
+                <table>
+                    <tr>
+                        <th>Title</th>
+                        <th>Rating</th>
+                        <th>Language</th>
+                    </tr>
+                    {% for movie in recommendations.itertuples() %}
+                    <tr>
+                        <td>{{ movie.title }}</td>
+                        <td>{{ movie.vote_average }}</td>
+                        <td>{{ movie.original_language }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
