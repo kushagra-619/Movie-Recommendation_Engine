@@ -1,0 +1,10 @@
+## 🛠️ Installation
+To run this project locally, follow these steps:
+1. Clone the repository: git clone https://github.com/your-username/movie-recommendation-system.git
+cd movie-recommendation-system
+2. Create a virtual environment (optional but recommended): python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+3. Install the required packages
+4. Download the top_rated_9000_movies_on_TMDB.csv dataset and place it in the root directory of the project.
+5. Run the Flask application
+6. Run on Localhost
